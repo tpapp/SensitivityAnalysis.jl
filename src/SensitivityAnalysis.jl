@@ -1,4 +1,7 @@
 """
+Organize sensitivity / perturbation analysis.
+
+See [`perturbation_analysis`](@ref) for a short example, and the documentation for details.
 """
 module SensitivityAnalysis
 
