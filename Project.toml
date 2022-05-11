@@ -11,4 +11,5 @@ ThreadPools = "b189fb0b-2eb5-4ed4-bc0c-d34c51242431"
 UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 
 [compat]
+UnPack = "1"
 julia = "1.6"
