@@ -217,9 +217,9 @@ function _lookup_perturbation_by_label(perturbation_analysis,
         contains(p.label, pattern)
     end
     if length(matches) > 1
-        throw(ArgumentError("multiple labels match $(label)"))
+        throw(ArgumentError("multiple labels match $(pattern)"))
     elseif isempty(matches)
-        throw(ArgumentError("no labels match $(label)"))
+        throw(ArgumentError("no labels match $(pattern)"))
     else
         first(matches)
     end
