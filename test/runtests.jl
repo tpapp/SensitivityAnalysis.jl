@@ -34,3 +34,5 @@ end
 
 sens_sigma = moment_sensitivity.(results, "σ", moments)
 @test isnan(sens_sigma[1].y[end])
+
+@test_throws ArgumentError moment_sensitivity(results, "not found", moments[1])
