@@ -51,8 +51,12 @@ difference(::Absolute, y, x) = y - x
 #### perturbations
 ####
 
+"""
+A container for a single perturbation. Internal, use [`perturbation`](@ref) to
+create, which documents the fields.
+"""
 struct Perturbation
-    label
+    label::AbstractString
     metadata
     lens
     change
@@ -63,7 +67,7 @@ end
 function Base.show(io::IO, perturbation::Perturbation)
     @unpack label, change, captured_errors, Δs = perturbation
     domain = Δs ≡ nothing ? "default domain" : extrema(Δs)
-    print(io, "perturb $(label) on $(domain), $(change) [capturing $(captured_errors)]")
+    print(io, "perturb “$(label)” on $(domain), $(change) [capturing $(captured_errors)]")
 end
 
 """
@@ -75,7 +79,7 @@ $(SIGNATURES)
 
 - `lens`: For changing an object via the `Accessors.lens` API.
 
-- `change`: A change calculator, eg [`ABSOLUTE`](@ref)` or [`RELATIVE`](@ref)`, or a
+- `change`: A change calculator, eg [`ABSOLUTE`](@ref) or [`RELATIVE`](@ref)`, or a
   callable with the signature `(x, Δ) -> new_x`.
 
 # Keyword arguments
@@ -89,7 +93,7 @@ $(SIGNATURES)
   captured and converted to `nothing`. These results will show up as `NaN` in moment
   sensitivities.
 """
-function perturbation(label, lens, change; metadata = nothing, Δs = nothing, captured_errors = DomainError)
+function perturbation(label::AbstractString, lens, change; metadata = nothing, Δs = nothing, captured_errors = DomainError)
     Perturbation(label, metadata, lens, change, captured_errors, Δs)
 end
 
@@ -112,8 +116,11 @@ function _perturbation_with(object, perturbation::Perturbation, Δ)
     end
 end
 
+"""
+A container for perturbation analysis. Internal, use [`perturbation_analysis`](@ref) to create.
+"""
 struct PerturbationAnalysis
-    label
+    label::Union{Nothing,AbstractString}
     object
     simulate
     baseline_result
@@ -123,8 +130,6 @@ end
 
 """
 $(SIGNATURES)
-
-A container for perturbation analysis.
 
 # Arguments
 
@@ -156,7 +161,7 @@ perturbation results with default domain (-0.1, 0.1)
 
 julia> push!(anls, perturbation("a", @optic(_.a), RELATIVE))
 perturbation results with default domain (-0.1, 0.1)
-  perturb a on default domain, relative change [capturing DomainError]
+  perturb “a” on default domain, relative change [capturing DomainError]
 
 julia> moment_sensitivity(anls, "a", moment("b", x -> x.b, ABSOLUTE))
 (label = "b (absolute change)", x = -0.1:0.02:0.1, y = [-2.0, -1.5999999999999979, -1.2000000000000028, -0.8000000000000007, -0.3999999999999986, 0.0, 0.3999999999999986, 0.8000000000000007, 1.2000000000000028, 1.6000000000000014, 2.0])
@@ -276,6 +281,19 @@ function _moment_sensitivity(moment, baseline_result, results)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Return sensitivity to a particular moment.
+
+# Arguments
+
+- `perturbation_analysis`: a perturbation analysis, started by [`perturbation_analysis`](@ref)
+
+- `index_or_pattern`: an integer that for a moment, or a pattern (eg a regex) that will be matched with labels
+
+- `moment`: the moment to calculate, see [`moment`](@ref)
+"""
 function moment_sensitivity(perturbation_analysis, index_or_pattern, moment)
     @unpack baseline_result, perturbations_and_results = perturbation_analysis
     index = _lookup_perturbation_by_label(perturbation_analysis, index_or_pattern)
