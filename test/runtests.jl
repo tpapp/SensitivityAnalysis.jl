@@ -1,4 +1,4 @@
-using SensitivityAnalysis, Test, Statistics, UnPack, Accessors
+using SensitivityAnalysis, Test, Statistics, SimpleUnPack, Accessors
 
 struct SimulateNormal{T}
     μ::T
