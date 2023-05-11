@@ -151,7 +151,7 @@ $(SIGNATURES)
 # Usage
 
 Once an analysis is created, you should `push!` perturbations into it. `label`s should be
-unique, as they can be used for lookup.
+unique, as they can be used for lookup. `keys` returns a vector of labels.
 
 ```jldoctest
 julia> using SensitivityAnalysis, Accessors
@@ -207,6 +207,10 @@ function Base.push!(perturbation_analysis::PerturbationAnalysis, perturbation::P
     end
     push!(perturbations_and_results, perturbation => results)
     perturbation_analysis
+end
+
+function Base.keys(perturbation_analysis::PerturbationAnalysis)
+    map(p -> p[1].label, perturbation_analysis.perturbations_and_results)
 end
 
 """

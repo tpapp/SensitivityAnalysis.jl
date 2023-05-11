@@ -20,6 +20,7 @@ results = perturbation_analysis(SimulateNormal(0.0, 1.0), simulate)
 push!(results,
       perturbation("μ", @optic(_.μ), ABSOLUTE),
       perturbation("σ", @optic(_.σ), RELATIVE))
+@test sort(keys(results)) == sort(["μ", "σ"])
 
 moments = [moment("mean", x -> x.mean, ABSOLUTE; metadata = :meta),
            moment("std", x -> x.std, RELATIVE)]
